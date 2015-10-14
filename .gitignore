@@ -1,7 +1,24 @@
-*.class
-
 # Mobile Tools for Java (J2ME)
 .mtj.tmp/
+
+# Java class files
+*.class
+
+# generated files
+bin/
+gen/
+
+# Local configuration file (sdk path, etc)
+local.properties
+
+# Windows thumbnail 
+db
+Thumbs.db
+
+# Eclipse project files
+.classpath
+.project
+.settings
 
 # Package Files #
 *.jar
