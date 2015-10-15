@@ -241,8 +241,8 @@ public class PackageInstallerTest {
 
 			// Print pass or fail
 			if (resolved == null) {
-				System.out.print("\nOutput: NULL");
-				// TODO get error message from PackageInstaller
+				// Get error message from PackageInstaller
+				System.out.print("\nOutput: " + installer.getErrorMessage());
 				System.out.print("\n    PASSED");
 
 			} else {

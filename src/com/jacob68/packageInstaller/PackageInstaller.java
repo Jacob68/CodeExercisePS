@@ -19,6 +19,7 @@ public class PackageInstaller {
 
 	private ArrayList<Node> mNodes = new ArrayList<Node>();
 	private ArrayList<Node> mOrderedNodes = new ArrayList<Node>();
+	private String mErrorMsg;
 
 	public static void main(String[] args) {
 		// TODO Auto-generated method stub
@@ -31,6 +32,10 @@ public class PackageInstaller {
 		// Once have the node list, generate the dependency list
 
 		// TODO Generate output, catch cycles
+	}
+
+	public String getErrorMessage() {
+		return mErrorMsg;
 	}
 
 	/**
@@ -136,23 +141,18 @@ public class PackageInstaller {
 	 *         detected.
 	 */
 	public ArrayList<Node> computeDependencies(@NotNull ArrayList<Node> nodes) {
-		// TODO go through all nodes, drill down to last dependent, add nodes in
-		// reverse order
 		// Keep track of nodes we've already seen to check for circular
 		// dependencies.
 		ArrayList<Node> seen = new ArrayList<Node>();
 
-		// TODO this will be more of a wrapper method, not the actual resolve
-		// method
 		try {
 			while (mNodes.size() > 0) {
 				resolveDependency(mNodes.get(0), seen, mNodes, mOrderedNodes);
 			}
 
 		} catch (Exception e) {
-			// TODO save error message
-			// Print error message
-			System.out.println(e.getMessage());
+			// Save error message
+			mErrorMsg = e.getMessage();
 			return null;
 		}
 
