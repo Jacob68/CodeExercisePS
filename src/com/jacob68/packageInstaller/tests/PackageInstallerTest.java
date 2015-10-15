@@ -1,6 +1,8 @@
 package com.jacob68.packageInstaller.tests;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
 
 import java.util.ArrayList;
 
@@ -139,27 +141,67 @@ public class PackageInstallerTest {
 	}
 
 	@Test
-	public void simpleSmallListShouldBeValid() {
+	public void packageListsShouldBeValid() {
 		PackageInstaller installer = new PackageInstaller();
 
-		// Get input package list
-		String[] input = TestHelper.getValidSimpleSmall();
+		System.out.print("\nSTART--Valid Package Lists Test--");
 
-		// Convert package list to node list
-		installer.convertPackagesToNodes(input);
-		ArrayList<Node> nodes = installer.getNodes();
+		for (int i = 0; i < 4; i++) {
+			// Get input package list
+			String[] input;
+			switch (i) {
+			case 0:
+				input = TestHelper.getValidSimpleSmall();
+				System.out.print("\n------Test: Simple Small------");
+				break;
+			case 1:
+				input = TestHelper.getValidSimpleLarge();
+				System.out.print("\n------Test: Simple Large------");
+				break;
+			case 2:
+				input = TestHelper.getValidSmall();
+				System.out.print("\n------Test: Small------");
+				break;
+			default:
+				input = TestHelper.getValidLarge();
+				System.out.print("\n------Test: Large------");
+				break;
+			}
+			// Print out the input
+			System.out.print("\nInput: "
+					+ TestHelper.convertArrayToString(input));
 
-		// Compute dependency list
-		ArrayList<Node> resolved = installer.computeDependencies(nodes);
+			// Convert package list to node list
+			installer.convertPackagesToNodes(input);
 
-		assertNotNull("Package list " + input.toString()
-				+ " should generate a Non-Null install order string", resolved);
+			// Compute dependency list
+			ArrayList<Node> resolved = installer.computeDependencies(installer
+					.getNodes());
+
+			// Print pass or fail
+			if (resolved != null) {
+				// Print out the output
+				System.out.print("\nOutput: "
+						+ TestHelper.convertNodeListToString(resolved, false));
+				System.out.print("\n    PASSED");
+
+			} else {
+				System.out.print("\nOutput: NULL");
+				// TODO get error message from PackageInstaller
+				System.out.print("\n    FAIL");
+			}
+
+			assertNotNull("Package list " + input.toString()
+					+ " should generate a Non-Null dependency list", resolved);
+		}
+
+		System.out.print("\nEND\n");
 	}
 
 	// TODO Test all other valid package lists
 
 	@Test
-	public void simpleSmallListShouldBeCyclic() {
+	public void packageListsShouldBeCyclic() {
 		PackageInstaller installer = new PackageInstaller();
 
 		// Get input package list
