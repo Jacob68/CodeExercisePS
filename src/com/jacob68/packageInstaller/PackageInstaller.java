@@ -71,6 +71,9 @@ public class PackageInstaller {
 	 *            The String array of packages. Must not be <code>null</code>.
 	 */
 	public void convertPackagesToNodes(@NotNull String[] packages) {
+		// Clear current nodes list
+		mNodes.clear();
+
 		// Create a Node object for each package
 		for (int i = 0; i < packages.length; i++) {
 			String[] parts = packages[i].split(": ");
