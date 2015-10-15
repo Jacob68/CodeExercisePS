@@ -22,16 +22,56 @@ public class PackageInstallerTest {
 	// TODO create test for length comparison
 
 	@Test
+	public void testInputOutputListSizesOnConvertPackages() {
+		PackageInstaller installer = new PackageInstaller();
+
+		// Get input package list
+		String[] input = TestHelper.getValidLarge();
+		// Print out the input
+		System.out
+				.print("\nSTART Convert Packages Input & Output list size Test:\n");
+		System.out.print("Input: " + TestHelper.convertArrayToString(input));
+
+		// Convert package list to node list
+		installer.convertPackagesToNodes(input);
+		ArrayList<Node> nodes = installer.getNodes();
+		// Print out the nodes list
+		System.out.print("\nComputed Nodes: "
+				+ TestHelper.convertNodeListToString(nodes, true));
+
+		// Print pass or fail
+		System.out.print("\n Input list size = " + input.length
+				+ ", output node list size = " + nodes.size());
+		if (input.length == nodes.size()) {
+			System.out.print("\n    PASSED    \n");
+
+		} else {
+			System.out.print("\n    FAIL    ");
+		}
+
+		assertEquals("Input list size (" + input.length
+				+ ") must equal output list size (" + nodes.size() + ")",
+				input.length, nodes.size());
+
+		System.out.print("\nEND\n");
+	}
+
+	@Test
 	public void inputListSizeShouldMatchOutputListSize() {
+		PackageInstaller installer = new PackageInstaller();
+
 		// Get input package list
 		String[] input = TestHelper.getValidLarge();
 
 		// Convert package list to node list
-		ArrayList<Node> nodes = PackageInstaller.convertPackagesToNodes(input);
+		installer.convertPackagesToNodes(input);
+		ArrayList<Node> nodes = installer.getNodes();
 
 		// Compute dependency list
-		ArrayList<Node> resolved = PackageInstaller.computeDependencies(nodes);
+		ArrayList<Node> resolved = installer.computeDependencies(nodes);
 
+		System.out.println(String.format("Input size = %d, output size = %d",
+				input.length, resolved.size()));
 		assertEquals("Input list size (" + input.length
 				+ ") must equal output list size (" + resolved.size() + ")",
 				input.length, resolved.size());
@@ -39,14 +79,17 @@ public class PackageInstallerTest {
 
 	@Test
 	public void simpleSmallListShouldBeValid() {
+		PackageInstaller installer = new PackageInstaller();
+
 		// Get input package list
 		String[] input = TestHelper.getValidSimpleSmall();
 
 		// Convert package list to node list
-		ArrayList<Node> nodes = PackageInstaller.convertPackagesToNodes(input);
+		installer.convertPackagesToNodes(input);
+		ArrayList<Node> nodes = installer.getNodes();
 
 		// Compute dependency list
-		ArrayList<Node> resolved = PackageInstaller.computeDependencies(nodes);
+		ArrayList<Node> resolved = installer.computeDependencies(nodes);
 
 		assertNotNull("Package list " + input.toString()
 				+ " should generate a Non-Null install order string", resolved);
@@ -56,14 +99,17 @@ public class PackageInstallerTest {
 
 	@Test
 	public void simpleSmallListShouldBeCyclic() {
+		PackageInstaller installer = new PackageInstaller();
+
 		// Get input package list
 		String[] input = TestHelper.getCyclicSimpleSmall();
 
 		// Convert package list to node list
-		ArrayList<Node> nodes = PackageInstaller.convertPackagesToNodes(input);
+		installer.convertPackagesToNodes(input);
+		ArrayList<Node> nodes = installer.getNodes();
 
 		// Compute dependency list
-		ArrayList<Node> resolved = PackageInstaller.computeDependencies(nodes);
+		ArrayList<Node> resolved = installer.computeDependencies(nodes);
 
 		assertNull("Package list " + input.toString()
 				+ " is cyclic and should generate a Null resolved list",

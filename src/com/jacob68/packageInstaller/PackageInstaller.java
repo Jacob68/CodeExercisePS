@@ -17,6 +17,42 @@ import com.sun.istack.internal.NotNull;
  */
 public class PackageInstaller {
 
+	private ArrayList<Node> mNodes = new ArrayList<Node>();
+	private ArrayList<Node> orderedNodes = new ArrayList<Node>();
+
+	public static void main(String[] args) {
+		// TODO Auto-generated method stub
+
+		// TODO Get package list input
+
+		// TODO Create a node list from the package list
+		// Node should have a name and dependent node
+
+		// Once have the node list, generate the dependency list
+
+		// TODO Generate output, catch cycles
+	}
+
+	private Node getNode(String nodeName) {
+		for (Node node : mNodes) {
+			if (node.name.equals(nodeName)) {
+				return node;
+			}
+		}
+		return null;
+	}
+
+	/**
+	 * Must call method
+	 * {@linkplain PackageInstaller#convertPackagesToNodes(String[])} first to
+	 * ensure the nodes list has been generated.
+	 * 
+	 * @return The list of <i>Nodes</i> as converted from the package list.
+	 */
+	public ArrayList<Node> getNodes() {
+		return mNodes;
+	}
+
 	/**
 	 * Converts a String array containing packages into an ArrayList of
 	 * {@linkplain Node}s.
@@ -30,11 +66,43 @@ public class PackageInstaller {
 	 * @return The list of <i>Nodes</i> as converted from the given list of
 	 *         packages.
 	 */
-	public static ArrayList<Node> convertPackagesToNodes(
-			@NotNull String[] packages) {
-		// TODO create the nodes list from the packages list
+	public void convertPackagesToNodes(@NotNull String[] packages) {
+		// Create a Node object for each package
+		for (int i = 0; i < packages.length; i++) {
+			String[] parts = packages[i].split(": ");
 
-		return null;
+			// Get/Create the parent node
+			Node parent = getNode(parts[0]);
+			if (parent == null) {
+				// Don't have this node, create it
+				parent = new Node(parts[0]);
+			}
+
+			// Set dependent node if any
+			if (parent.dependent == null && parts.length > 1) {
+				// Need to set the dependent
+				String name = parts[1];
+				// See if we have this node already
+				Node dependent = getNode(name);
+				if (dependent != null) {
+					// Have this node already,
+					// Set the dependent node to the parent node.
+					parent.setDependent(dependent);
+					// TODO check for cycle here?
+
+				} else {
+					// Create the dependent node
+					dependent = new Node(name);
+					// Add the dependent node to the parent
+					parent.setDependent(dependent);
+					// Add new dependent node to list
+					mNodes.add(dependent);
+				}
+			}
+
+			// Add new node to list
+			mNodes.add(parent);
+		}
 	}
 
 	/**
@@ -48,24 +116,10 @@ public class PackageInstaller {
 	 *         resolved or <code>null</code> if a circular dependency was
 	 *         detected.
 	 */
-	public static ArrayList<Node> computeDependencies(
-			@NotNull ArrayList<Node> nodes) {
+	public ArrayList<Node> computeDependencies(@NotNull ArrayList<Node> nodes) {
 		// TODO go through all nodes, drill down to last dependent, add nodes in
 		// reverse order
 		return null;
-	}
-
-	public static void main(String[] args) {
-		// TODO Auto-generated method stub
-
-		// TODO Get package list input
-
-		// TODO Create a node list from the package list
-		// Node should have a name and dependent node
-
-		// Once have the node list, generate the dependency list
-
-		// TODO Generate output, catch cycles
 	}
 
 }

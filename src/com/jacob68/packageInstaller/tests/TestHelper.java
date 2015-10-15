@@ -1,6 +1,32 @@
 package com.jacob68.packageInstaller.tests;
 
+import java.util.ArrayList;
+
+import com.jacob68.packageInstaller.Node;
+import com.sun.istack.internal.NotNull;
+
 public class TestHelper {
+
+	public static String convertArrayToString(@NotNull String[] array) {
+		String output = "[ ";
+		for (int i = 0; i < array.length; i++) {
+			output += "\"" + array[i] + "\", ";
+		}
+		output = output.substring(0, output.length() - 2);
+		return output + " ]";
+	}
+
+	public static String convertNodeListToString(
+			@NotNull ArrayList<Node> nodes, boolean withDependents) {
+		String output = "[ ";
+		for (int i = 0; i < nodes.size(); i++) {
+			String nodeString = withDependents ? nodes.get(i).toString()
+					: nodes.get(i).name;
+			output += nodeString + ", ";
+		}
+		output = output.substring(0, output.length() - 2);
+		return output + " ]";
+	}
 
 	// Simple package strings
 
