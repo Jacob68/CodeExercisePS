@@ -1,7 +1,6 @@
 package com.jacob68.packageInstaller.tests;
 
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
+import static org.junit.Assert.*;
 
 import java.util.ArrayList;
 
@@ -21,6 +20,22 @@ public class PackageInstallerTest {
 	// TODO Since packages can have up to 1 dependent, the input list and the
 	// resolved lists should be the same length?
 	// TODO create test for length comparison
+
+	@Test
+	public void inputListSizeShouldMatchOutputListSize() {
+		// Get input package list
+		String[] input = TestHelper.getValidLarge();
+
+		// Convert package list to node list
+		ArrayList<Node> nodes = PackageInstaller.convertPackagesToNodes(input);
+
+		// Compute dependency list
+		ArrayList<Node> resolved = PackageInstaller.computeDependencies(nodes);
+
+		assertEquals("Input list size (" + input.length
+				+ ") must equal output list size (" + resolved.size() + ")",
+				input.length, resolved.size());
+	}
 
 	@Test
 	public void simpleSmallListShouldBeValid() {
