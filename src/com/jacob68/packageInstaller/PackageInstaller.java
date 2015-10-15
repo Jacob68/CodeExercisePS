@@ -100,9 +100,22 @@ public class PackageInstaller {
 				}
 			}
 
-			// Add new node to list
-			mNodes.add(parent);
+			// Add/update node to list
+			addOrUpdateNodeToList(parent);
+			// mNodes.add(parent);
 		}
+	}
+
+	private void addOrUpdateNodeToList(Node node) {
+		for (Node n : mNodes) {
+			if (n.name.equals(node.name)) {
+				// Update dependency
+				n.dependent = node.dependent;
+				return;
+			}
+		}
+		// Node not found, add it to list
+		mNodes.add(node);
 	}
 
 	/**
