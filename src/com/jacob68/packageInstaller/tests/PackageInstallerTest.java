@@ -75,59 +75,67 @@ public class PackageInstallerTest {
 		System.out.print("\nEND\n");
 	}
 
-	@Test
-	public void simpleLargeInputOutputListSizesOnConvertPackagesShouldMatch() {
-		PackageInstaller installer = new PackageInstaller();
-
-		System.out
-				.print("\nSTART--Convert Packages (Simple Large) List Sizes Test--");
-
-		// Get input package list
-		String[] input = TestHelper.getValidSimpleLarge();
-		// Print out the input
-		System.out.print("\nInput: " + TestHelper.convertArrayToString(input));
-
-		// Convert package list to node list
-		installer.convertPackagesToNodes(input);
-		ArrayList<Node> nodes = installer.getNodes();
-		// Print out the nodes list
-		System.out.print("\nOutput: "
-				+ TestHelper.convertNodeListToString(nodes, true));
-
-		// Print pass or fail
-		if (input.length == nodes.size()) {
-			System.out.print("\n    PASSED");
-
-		} else {
-			System.out.print("\n    FAIL");
-		}
-
-		assertEquals("Input list size (" + input.length
-				+ ") must equal output list size (" + nodes.size() + ")",
-				input.length, nodes.size());
-
-		System.out.print("\nEND\n");
-	}
-
+	/**
+	 * Runs list size tests on the computeDependencies() method for all valid
+	 * test arrays.
+	 */
 	@Test
 	public void inputOutputListSizesOnComputeDependenciesShouldMatch() {
 		PackageInstaller installer = new PackageInstaller();
 
-		// Get input package list
-		String[] input = TestHelper.getValidLarge();
+		System.out.print("\nSTART--Compute Dependencies List Sizes Test--");
 
-		// Convert package list to node list
-		installer.convertPackagesToNodes(input);
-		ArrayList<Node> nodes = installer.getNodes();
+		for (int i = 0; i < 4; i++) {
+			// Get input package list
+			String[] input;
+			switch (i) {
+			case 0:
+				input = TestHelper.getValidSimpleSmall();
+				System.out.print("\n------Test: Simple Small------");
+				break;
+			case 1:
+				input = TestHelper.getValidSimpleLarge();
+				System.out.print("\n------Test: Simple Large------");
+				break;
+			case 2:
+				input = TestHelper.getValidSmall();
+				System.out.print("\n------Test: Small------");
+				break;
+			default:
+				input = TestHelper.getValidLarge();
+				System.out.print("\n------Test: Large------");
+				break;
+			}
+			// Print out the input
+			System.out.print("\nInput: "
+					+ TestHelper.convertArrayToString(input));
 
-		// Compute dependency list
-		ArrayList<Node> resolved = installer.computeDependencies(nodes);
+			// Convert package list to node list
+			installer.convertPackagesToNodes(input);
 
-		System.out.println(String.format("Input size = %d, output size = %d",
-				input.length, resolved.size()));
-		assertEquals("Input list size (" + input.length
-				+ ") must equal output list size (" + resolved.size() + ")",
-				input.length, resolved.size());
+			// Compute dependency list
+			ArrayList<Node> resolved = installer.computeDependencies(installer
+					.getNodes());
+			// Print out the output
+			System.out.print("\nOutput: "
+					+ TestHelper.convertNodeListToString(resolved, false));
+
+			// Print pass or fail
+			if (input.length == resolved.size()) {
+				System.out.print("\n    PASSED");
+
+			} else {
+				System.out.print("\n    FAIL");
+			}
+
+			assertEquals(
+					"Input list size (" + input.length
+							+ ") must equal output list size ("
+							+ resolved.size() + ")", input.length,
+					resolved.size());
+		}
+
+		System.out.print("\nEND\n");
 	}
 
 	@Test
