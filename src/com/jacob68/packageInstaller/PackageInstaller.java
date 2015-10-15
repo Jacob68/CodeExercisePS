@@ -18,7 +18,7 @@ import com.sun.istack.internal.NotNull;
 public class PackageInstaller {
 
 	private ArrayList<Node> mNodes = new ArrayList<Node>();
-	private ArrayList<Node> orderedNodes = new ArrayList<Node>();
+	private ArrayList<Node> mOrderedNodes = new ArrayList<Node>();
 
 	public static void main(String[] args) {
 		// TODO Auto-generated method stub
@@ -33,6 +33,13 @@ public class PackageInstaller {
 		// TODO Generate output, catch cycles
 	}
 
+	/**
+	 * @param nodeName
+	 *            The name of the node to get from the nodes list.
+	 * 
+	 * @return The Node with the given <i>nodeName</i> or <code>null</code> if
+	 *         not found in the nodes list.
+	 */
 	private Node getNode(String nodeName) {
 		for (Node node : mNodes) {
 			if (node.name.equals(nodeName)) {
@@ -62,9 +69,6 @@ public class PackageInstaller {
 	 * 
 	 * @param packages
 	 *            The String array of packages. Must not be <code>null</code>.
-	 * 
-	 * @return The list of <i>Nodes</i> as converted from the given list of
-	 *         packages.
 	 */
 	public void convertPackagesToNodes(@NotNull String[] packages) {
 		// Create a Node object for each package
@@ -102,7 +106,6 @@ public class PackageInstaller {
 
 			// Add/update node to list
 			addOrUpdateNodeToList(parent);
-			// mNodes.add(parent);
 		}
 	}
 
