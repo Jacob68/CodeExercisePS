@@ -138,27 +138,59 @@ public class PackageInstaller {
 	public ArrayList<Node> computeDependencies(@NotNull ArrayList<Node> nodes) {
 		// TODO go through all nodes, drill down to last dependent, add nodes in
 		// reverse order
+		// Keep track of nodes we've already seen to check for circular
+		// dependencies.
+		ArrayList<Node> seen = new ArrayList<Node>();
 
 		// TODO this will be more of a wrapper method, not the actual resolve
 		// method
+		try {
+			while (mNodes.size() > 0) {
+				resolveDependency(mNodes.get(0), seen, mNodes, mOrderedNodes);
+			}
 
-		// Just grab the first node to start the process
-		resolveDependency(mNodes.get(0), mOrderedNodes);
+		} catch (Exception e) {
+			// TODO save error message
+			// Print error message
+			System.out.println(e.getMessage());
+			return null;
+		}
 
 		return mOrderedNodes;
 	}
 
-	private void resolveDependency(Node node, ArrayList<Node> resolved) {
+	/**
+	 * Drills down through the dependencies of the given node until the last
+	 * dependency has been found or a circular dependency has been detected.
+	 * 
+	 * @param node
+	 *            The node for which to resolve dependencies.
+	 * @param resolved
+	 *            The list of currently resolved nodes.
+	 */
+	private void resolveDependency(Node node, ArrayList<Node> seen,
+			ArrayList<Node> unresolved, ArrayList<Node> resolved)
+			throws Exception {
+		// Add node to the seen list
+		seen.add(node);
 
-		if (node.dependent != null) {
+		// Don't add dependent node if already resolved
+		if (node.dependent != null && !resolved.contains(node.dependent)) {
 			// TODO Check for circular dependency
-			resolveDependency(node.dependent, resolved);
+			if (seen.contains(node.dependent)) {
+				throw new Exception(String.format(
+						"Found circular dependency: %s -> %s", node.name,
+						node.dependent.name));
+			}
+			resolveDependency(node.dependent, seen, unresolved, resolved);
 		}
 
 		if (!resolved.contains(node)) {
 			// add to resolved list
 			resolved.add(node);
 		}
+		// remove from unresolved list
+		unresolved.remove(node);
 	}
 
 }

@@ -5,6 +5,7 @@ import static org.junit.Assert.assertNotNull;
 
 import java.util.ArrayList;
 
+import org.junit.Ignore;
 import org.junit.Test;
 
 import com.jacob68.packageInstaller.Node;
@@ -198,6 +199,7 @@ public class PackageInstallerTest {
 	}
 
 	@Test
+	@Ignore
 	public void packageListsShouldBeCyclic() {
 		PackageInstaller installer = new PackageInstaller();
 
