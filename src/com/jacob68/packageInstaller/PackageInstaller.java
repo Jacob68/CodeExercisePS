@@ -1,6 +1,7 @@
 package com.jacob68.packageInstaller;
 
 import java.util.ArrayList;
+import java.util.Scanner;
 
 import com.sun.istack.internal.NotNull;
 
@@ -27,7 +28,37 @@ public class PackageInstaller {
 	public static void main(String[] args) {
 		// TODO Auto-generated method stub
 
+		System.out.println("Welcome to the package installer");
+		System.out.println("--------------------------------");
+		System.out.println("Simply enter a list of packages.");
+		System.out
+				.println("Each package must have the format, 'name: dependency'");
+		System.out.println("Hit the 'return' key to enter another package.");
+		System.out.println("Enter 'd' at anytime to finish entering packages.");
+
 		// TODO Get package list input
+		Scanner input = new Scanner(System.in);
+		String entry = "";
+		ArrayList<String> packages = new ArrayList<String>();
+
+		while (!entry.equals("d")) {
+			entry = input.next();
+
+			// Check for proper format
+			String regex = "(.*):(.*)";
+			String regex1 = ".(:).";
+			if (entry.matches(regex)) {
+				// TODO add entry to list
+				packages.add(entry);
+
+			} else {
+				// Prompt bad format
+				System.out.println("Bad format, try again");
+			}
+		}
+
+		// Check size of list
+		System.out.println("Packages list size = " + packages.size());
 
 		// TODO Create a node list from the package list
 		// Node should have a name and dependent node
