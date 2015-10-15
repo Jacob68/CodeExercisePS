@@ -2,10 +2,10 @@ package com.jacob68.packageInstaller.tests;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
 
 import java.util.ArrayList;
 
-import org.junit.Ignore;
 import org.junit.Test;
 
 import com.jacob68.packageInstaller.Node;
@@ -67,6 +67,7 @@ public class PackageInstallerTest {
 
 			} else {
 				System.out.print("\n    FAIL");
+				System.out.print("\nEND\n");
 			}
 
 			assertEquals("Input list size (" + input.length
@@ -128,6 +129,7 @@ public class PackageInstallerTest {
 
 			} else {
 				System.out.print("\n    FAIL");
+				System.out.print("\nEND\n");
 			}
 
 			assertEquals(
@@ -189,6 +191,7 @@ public class PackageInstallerTest {
 				System.out.print("\nOutput: NULL");
 				// TODO get error message from PackageInstaller
 				System.out.print("\n    FAIL");
+				System.out.print("\nEND\n");
 			}
 
 			assertNotNull("Package list " + input.toString()
@@ -199,7 +202,6 @@ public class PackageInstallerTest {
 	}
 
 	@Test
-	@Ignore
 	public void packageListsShouldBeCyclic() {
 		PackageInstaller installer = new PackageInstaller();
 
@@ -210,19 +212,19 @@ public class PackageInstallerTest {
 			String[] input;
 			switch (i) {
 			case 0:
-				input = TestHelper.getValidSimpleSmall();
+				input = TestHelper.getCyclicSimpleSmall();
 				System.out.print("\n------Test: Simple Small------");
 				break;
 			case 1:
-				input = TestHelper.getValidSimpleLarge();
+				input = TestHelper.getCyclicSimpleLarge();
 				System.out.print("\n------Test: Simple Large------");
 				break;
 			case 2:
-				input = TestHelper.getValidSmall();
+				input = TestHelper.getCyclicSmall();
 				System.out.print("\n------Test: Small------");
 				break;
 			default:
-				input = TestHelper.getValidLarge();
+				input = TestHelper.getCyclicLarge();
 				System.out.print("\n------Test: Large------");
 				break;
 			}
@@ -238,19 +240,20 @@ public class PackageInstallerTest {
 					.getNodes());
 
 			// Print pass or fail
-			if (resolved != null) {
+			if (resolved == null) {
+				System.out.print("\nOutput: NULL");
+				// TODO get error message from PackageInstaller
+				System.out.print("\n    PASSED");
+
+			} else {
 				// Print out the output
 				System.out.print("\nOutput: "
 						+ TestHelper.convertNodeListToString(resolved, false));
 				System.out.print("\n    FAIL");
-
-			} else {
-				System.out.print("\nOutput: NULL");
-				// TODO get error message from PackageInstaller
-				System.out.print("\n    PASSED");
+				System.out.print("\nEND\n");
 			}
 
-			assertNotNull("Package list " + input.toString()
+			assertNull("Package list " + input.toString()
 					+ " is cyclic and should generate a Null dependency list",
 					resolved);
 		}
