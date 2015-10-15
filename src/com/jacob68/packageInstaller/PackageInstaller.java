@@ -135,7 +135,27 @@ public class PackageInstaller {
 	public ArrayList<Node> computeDependencies(@NotNull ArrayList<Node> nodes) {
 		// TODO go through all nodes, drill down to last dependent, add nodes in
 		// reverse order
-		return null;
+
+		// TODO this will be more of a wrapper method, not the actual resolve
+		// method
+
+		// Just grab the first node to start the process
+		resolveDependency(mNodes.get(0), mOrderedNodes);
+
+		return mOrderedNodes;
+	}
+
+	private void resolveDependency(Node node, ArrayList<Node> resolved) {
+
+		if (node.dependent != null) {
+			// TODO Check for circular dependency
+			resolveDependency(node.dependent, resolved);
+		}
+
+		if (!resolved.contains(node)) {
+			// add to resolved list
+			resolved.add(node);
+		}
 	}
 
 }
