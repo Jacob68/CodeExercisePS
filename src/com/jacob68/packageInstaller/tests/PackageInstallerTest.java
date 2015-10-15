@@ -117,8 +117,7 @@ public class PackageInstallerTest {
 			installer.convertPackagesToNodes(input);
 
 			// Compute dependency list
-			ArrayList<Node> resolved = installer.computeDependencies(installer
-					.getNodes());
+			ArrayList<Node> resolved = installer.computeDependencies();
 			// Print out the output
 			System.out.print("\nOutput: "
 					+ TestHelper.convertNodeListToString(resolved, false));
@@ -177,8 +176,7 @@ public class PackageInstallerTest {
 			installer.convertPackagesToNodes(input);
 
 			// Compute dependency list
-			ArrayList<Node> resolved = installer.computeDependencies(installer
-					.getNodes());
+			ArrayList<Node> resolved = installer.computeDependencies();
 
 			// Print pass or fail
 			if (resolved != null) {
@@ -188,8 +186,9 @@ public class PackageInstallerTest {
 				System.out.print("\n    PASSED");
 
 			} else {
-				System.out.print("\nOutput: NULL");
-				// TODO get error message from PackageInstaller
+				// Get error message from PackageInstaller
+				System.out.print("\nOutput: ERROR-"
+						+ installer.getErrorMessage());
 				System.out.print("\n    FAIL");
 				System.out.print("\nEND\n");
 			}
@@ -236,8 +235,7 @@ public class PackageInstallerTest {
 			installer.convertPackagesToNodes(input);
 
 			// Compute dependency list
-			ArrayList<Node> resolved = installer.computeDependencies(installer
-					.getNodes());
+			ArrayList<Node> resolved = installer.computeDependencies();
 
 			// Print pass or fail
 			if (resolved == null) {

@@ -12,13 +12,16 @@ import com.sun.istack.internal.NotNull;
  * If a circular dependency is detected, an error will be displayed and the
  * application will terminate.
  * </p>
+ * <p>
+ * TODO Could maybe simplify the process by removing the Node class and
+ * combining the convertPackagesToNodes list and the computeDependencies list?
+ * </p>
  * 
  * @author Jacobus LaFazia
  */
 public class PackageInstaller {
 
 	private ArrayList<Node> mNodes = new ArrayList<Node>();
-	private ArrayList<Node> mOrderedNodes = new ArrayList<Node>();
 	private String mErrorMsg;
 
 	public static void main(String[] args) {
@@ -140,14 +143,15 @@ public class PackageInstaller {
 	 *         resolved or <code>null</code> if a circular dependency was
 	 *         detected.
 	 */
-	public ArrayList<Node> computeDependencies(@NotNull ArrayList<Node> nodes) {
+	public ArrayList<Node> computeDependencies() {
 		// Keep track of nodes we've already seen to check for circular
 		// dependencies.
 		ArrayList<Node> seen = new ArrayList<Node>();
+		ArrayList<Node> resolved = new ArrayList<Node>();
 
 		try {
 			while (mNodes.size() > 0) {
-				resolveDependency(mNodes.get(0), seen, mNodes, mOrderedNodes);
+				resolveDependency(mNodes.get(0), seen, mNodes, resolved);
 			}
 
 		} catch (Exception e) {
@@ -156,7 +160,7 @@ public class PackageInstaller {
 			return null;
 		}
 
-		return mOrderedNodes;
+		return resolved;
 	}
 
 	/**
@@ -176,7 +180,7 @@ public class PackageInstaller {
 
 		// Don't add dependent node if already resolved
 		if (node.dependent != null && !resolved.contains(node.dependent)) {
-			// TODO Check for circular dependency
+			// Check for circular dependency
 			if (seen.contains(node.dependent)) {
 				throw new Exception(String.format(
 						"Found circular dependency: %s -> %s", node.name,
