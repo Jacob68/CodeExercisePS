@@ -2,9 +2,28 @@ package com.jacob68.packageInstaller;
 
 import java.util.ArrayList;
 
+/**
+ * The actual worker class. Contains all static methods with the end result of
+ * generating a package install list with dependencies resolved.
+ * 
+ * @author Jacobus LaFazia
+ */
 public class DependencyResolver {
 
-	// TODO Main static method to do it all
+	/**
+	 * The main method that gets it all done.
+	 * 
+	 * @param packages
+	 *            The array of packages (with dependencies) from which to
+	 *            generate a package install list.
+	 * 
+	 * @return A {@linkplain Result} object containing a list of the resolved
+	 *         packages and an error message. If the given package list did not
+	 *         contain errors, the resulting list will be non-null and the error
+	 *         message will be null. If an error or circular dependency was
+	 *         detected, the resulting list will be null and the error message
+	 *         will be non-null.
+	 */
 	public static Result resolveDependencies(String[] packages) {
 		ArrayList<Node> nodes = convertPackagesToNodes(packages);
 		return computeDependencies(nodes);
@@ -84,6 +103,15 @@ public class DependencyResolver {
 		return nodes;
 	}
 
+	/**
+	 * Adds a node to the given list if it is not found in the list, if found in
+	 * list, just updates the node's dependent.
+	 * 
+	 * @param node
+	 *            The node to add/update.
+	 * @param nodes
+	 *            The list of nodes to add to.
+	 */
 	private static void addOrUpdateNodeToList(Node node, ArrayList<Node> nodes) {
 		for (Node n : nodes) {
 			if (n.name.equals(node.name)) {
@@ -98,14 +126,18 @@ public class DependencyResolver {
 
 	/**
 	 * Takes the given <i>nodes</i> list and computes all dependencies and
-	 * re-orders the nodes such that all dependencies will be resolved.
+	 * generates a 'resolved' list of the same nodes such that all dependencies
+	 * will be resolved.
 	 * 
 	 * @param nodes
-	 *            The list of nodes to compute the dependency list for. TODO
-	 *            update javadoc
-	 * @return The new list of nodes that are re-ordered with dependencies
-	 *         resolved or <code>null</code> if a circular dependency was
-	 *         detected.
+	 *            The list of nodes to compute the dependency list for.
+	 * 
+	 * @return A {@linkplain Result} object containing a list of the resolved
+	 *         packages and an error message. If the given package list did not
+	 *         contain errors, the resulting list will be non-null and the error
+	 *         message will be null. If an error or circular dependency was
+	 *         detected, the resulting list will be null and the error message
+	 *         will be non-null.
 	 */
 	public static Result computeDependencies(ArrayList<Node> nodes) {
 		// Keep track of nodes we've already seen to check for circular
@@ -129,11 +161,15 @@ public class DependencyResolver {
 	}
 
 	/**
-	 * Drills down through the dependencies of the given node until the last
+	 * Drills down through the dependencies for the given node until the last
 	 * dependency has been found or a circular dependency has been detected.
 	 * 
 	 * @param node
 	 *            The node for which to resolve dependencies.
+	 * @param seen
+	 *            The list of already 'seen' nodes.
+	 * @param unresolved
+	 *            The list of currently unresolved nodes.
 	 * @param resolved
 	 *            The list of currently resolved nodes.
 	 */

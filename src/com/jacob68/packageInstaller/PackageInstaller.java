@@ -5,15 +5,12 @@ import java.util.Scanner;
 import com.jacob68.packageInstaller.tests.TestHelper;
 
 /**
- * This is the package installer that will take a list of packages and determine
- * the correct order of install such that an install won't fail due to a missing
- * dependency.
+ * This is the package installer program class that will take a list of packages
+ * and determine the correct order of install such that an install won't fail
+ * due to a missing dependency.
  * <p>
  * If a circular dependency is detected, an error will be displayed and the
  * application will terminate.
- * </p>
- * <p>
- * Pass the package list to this class as arguments.
  * </p>
  * 
  * @author Jacobus LaFazia

@@ -4,6 +4,12 @@ import java.util.ArrayList;
 
 import com.jacob68.packageInstaller.Node;
 
+/**
+ * Helper class for getting test package lists and for formatting lists to a
+ * string.
+ * 
+ * @author Jacobus LaFazia
+ */
 public class TestHelper {
 
 	public static String convertArrayToString(String[] array) {

@@ -11,11 +11,10 @@ import org.junit.Test;
 
 import com.jacob68.packageInstaller.DependencyResolver;
 import com.jacob68.packageInstaller.Node;
-import com.jacob68.packageInstaller.PackageInstaller;
 import com.jacob68.packageInstaller.Result;
 
 /**
- * Test class that runs JUnit tests on the {@linkplain PackageInstaller} class
+ * Test class that runs JUnit tests on the {@linkplain DependencyResolver} class
  * methods.
  * 
  * @author Jacobus LaFazia
@@ -147,6 +146,10 @@ public class PackageInstallerTest {
 		System.out.print("\nEND\n");
 	}
 
+	/**
+	 * Runs tests on all valid test package lists to ensure they evaluate to
+	 * valid.
+	 */
 	@Test
 	public void packageListsShouldBeValid() {
 		System.out.print("\nSTART--Valid Package Lists Test--");
@@ -201,6 +204,10 @@ public class PackageInstallerTest {
 		System.out.print("\nEND\n");
 	}
 
+	/**
+	 * Runs tests on all cyclic test package lists to ensure the circular
+	 * dependency is detected.
+	 */
 	@Test
 	public void packageListsShouldBeCyclic() {
 		System.out.print("\nSTART--Cyclic Package Lists Test--");
