@@ -1,7 +1,5 @@
 package com.jacob68.packageInstaller;
 
-import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.Scanner;
 
 import com.jacob68.packageInstaller.tests.TestHelper;
@@ -56,8 +54,11 @@ public class PackageInstaller {
 
 		} while (true);
 
-		System.out.println("Running...");
+		// Close the input
+		input.close();
 
+		// Run the code
+		System.out.println("Running...");
 		Result result = DependencyResolver.resolveDependencies(packages);
 
 		// Print out the results

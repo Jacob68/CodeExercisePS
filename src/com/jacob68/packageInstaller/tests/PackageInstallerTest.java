@@ -3,13 +3,16 @@ package com.jacob68.packageInstaller.tests;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
+import static org.junit.Assert.fail;
 
 import java.util.ArrayList;
 
 import org.junit.Test;
 
+import com.jacob68.packageInstaller.DependencyResolver;
 import com.jacob68.packageInstaller.Node;
 import com.jacob68.packageInstaller.PackageInstaller;
+import com.jacob68.packageInstaller.Result;
 
 /**
  * Test class that runs JUnit tests on the {@linkplain PackageInstaller} class
@@ -25,10 +28,7 @@ public class PackageInstallerTest {
 	 */
 	@Test
 	public void inputOutputListSizesOnConvertPackagesShouldMatch() {
-		PackageInstaller installer = new PackageInstaller();
-
 		System.out.print("\nSTART--Convert Packages List Sizes Test--");
-
 		for (int i = 0; i < 4; i++) {
 			// Get input package list
 			String[] input;
@@ -55,8 +55,8 @@ public class PackageInstallerTest {
 					+ TestHelper.convertArrayToString(input));
 
 			// Convert package list to node list
-			installer.convertPackagesToNodes(input);
-			ArrayList<Node> nodes = installer.getNodes();
+			ArrayList<Node> nodes = DependencyResolver
+					.convertPackagesToNodes(input);
 			// Print out the nodes list
 			System.out.print("\nOutput: "
 					+ TestHelper.convertNodeListToString(nodes, true));
@@ -84,10 +84,7 @@ public class PackageInstallerTest {
 	 */
 	@Test
 	public void inputOutputListSizesOnComputeDependenciesShouldMatch() {
-		PackageInstaller installer = new PackageInstaller();
-
 		System.out.print("\nSTART--Compute Dependencies List Sizes Test--");
-
 		for (int i = 0; i < 4; i++) {
 			// Get input package list
 			String[] input;
@@ -113,22 +110,31 @@ public class PackageInstallerTest {
 			System.out.print("\nInput: "
 					+ TestHelper.convertArrayToString(input));
 
-			// Convert package list to node list
-			installer.convertPackagesToNodes(input);
-
 			// Compute dependency list
-			ArrayList<Node> resolved = installer.computeDependencies();
-			// Print out the output
-			System.out.print("\nOutput: "
-					+ TestHelper.convertNodeListToString(resolved, false));
+			Result result = DependencyResolver.resolveDependencies(input);
 
-			// Print pass or fail
-			if (input.length == resolved.size()) {
-				System.out.print("\n    PASSED");
-
-			} else {
+			// Print out the results
+			String msg = result.getErrorMessage();
+			ArrayList<Node> resolved = result.getResolvedNodes();
+			if (msg != null) {
+				// Failed
+				System.out.print("\nOutput: ERROR-" + msg);
 				System.out.print("\n    FAIL");
 				System.out.print("\nEND\n");
+				fail("Error: " + msg);
+
+			} else {
+				// Print out the output
+				msg = TestHelper.convertNodeListToString(resolved, false);
+				System.out.print("\nOutput: " + msg);
+				// Print pass or fail
+				if (input.length == resolved.size()) {
+					System.out.print("\n    PASSED");
+
+				} else {
+					System.out.print("\n    FAIL");
+					System.out.print("\nEND\n");
+				}
 			}
 
 			assertEquals(
@@ -143,10 +149,7 @@ public class PackageInstallerTest {
 
 	@Test
 	public void packageListsShouldBeValid() {
-		PackageInstaller installer = new PackageInstaller();
-
 		System.out.print("\nSTART--Valid Package Lists Test--");
-
 		for (int i = 0; i < 4; i++) {
 			// Get input package list
 			String[] input;
@@ -172,25 +175,23 @@ public class PackageInstallerTest {
 			System.out.print("\nInput: "
 					+ TestHelper.convertArrayToString(input));
 
-			// Convert package list to node list
-			installer.convertPackagesToNodes(input);
-
 			// Compute dependency list
-			ArrayList<Node> resolved = installer.computeDependencies();
+			Result result = DependencyResolver.resolveDependencies(input);
 
-			// Print pass or fail
-			if (resolved != null) {
-				// Print out the output
-				System.out.print("\nOutput: "
-						+ TestHelper.convertNodeListToString(resolved, false));
-				System.out.print("\n    PASSED");
-
-			} else {
-				// Get error message from PackageInstaller
-				System.out.print("\nOutput: ERROR-"
-						+ installer.getErrorMessage());
+			// Print out the results
+			String msg = result.getErrorMessage();
+			ArrayList<Node> resolved = result.getResolvedNodes();
+			if (msg != null) {
+				// Failed
+				System.out.print("\nOutput: ERROR-" + msg);
 				System.out.print("\n    FAIL");
 				System.out.print("\nEND\n");
+
+			} else {
+				// Print out the output
+				msg = TestHelper.convertNodeListToString(resolved, false);
+				System.out.print("\nOutput: " + msg);
+				System.out.print("\n    PASSED");
 			}
 
 			assertNotNull("Package list " + input.toString()
@@ -202,10 +203,7 @@ public class PackageInstallerTest {
 
 	@Test
 	public void packageListsShouldBeCyclic() {
-		PackageInstaller installer = new PackageInstaller();
-
 		System.out.print("\nSTART--Cyclic Package Lists Test--");
-
 		for (int i = 0; i < 4; i++) {
 			// Get input package list
 			String[] input;
@@ -231,22 +229,21 @@ public class PackageInstallerTest {
 			System.out.print("\nInput: "
 					+ TestHelper.convertArrayToString(input));
 
-			// Convert package list to node list
-			installer.convertPackagesToNodes(input);
-
 			// Compute dependency list
-			ArrayList<Node> resolved = installer.computeDependencies();
+			Result result = DependencyResolver.resolveDependencies(input);
 
-			// Print pass or fail
-			if (resolved == null) {
-				// Get error message from PackageInstaller
-				System.out.print("\nOutput: " + installer.getErrorMessage());
+			// Print out the results
+			String msg = result.getErrorMessage();
+			ArrayList<Node> resolved = result.getResolvedNodes();
+			if (msg != null) {
+				// Passed (by failing)
+				System.out.print("\nOutput: " + msg);
 				System.out.print("\n    PASSED");
 
 			} else {
 				// Print out the output
-				System.out.print("\nOutput: "
-						+ TestHelper.convertNodeListToString(resolved, false));
+				msg = TestHelper.convertNodeListToString(resolved, false);
+				System.out.print("\nOutput: " + msg);
 				System.out.print("\n    FAIL");
 				System.out.print("\nEND\n");
 			}
