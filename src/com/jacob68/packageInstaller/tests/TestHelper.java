@@ -3,11 +3,10 @@ package com.jacob68.packageInstaller.tests;
 import java.util.ArrayList;
 
 import com.jacob68.packageInstaller.Node;
-import com.sun.istack.internal.NotNull;
 
 public class TestHelper {
 
-	public static String convertArrayToString(@NotNull String[] array) {
+	public static String convertArrayToString(String[] array) {
 		String output = "[ ";
 		for (int i = 0; i < array.length; i++) {
 			output += "\"" + array[i] + "\", ";
@@ -16,8 +15,8 @@ public class TestHelper {
 		return output + " ]";
 	}
 
-	public static String convertNodeListToString(
-			@NotNull ArrayList<Node> nodes, boolean withDependents) {
+	public static String convertNodeListToString(ArrayList<Node> nodes,
+			boolean withDependents) {
 		String output = "[ ";
 		for (int i = 0; i < nodes.size(); i++) {
 			String nodeString = withDependents ? nodes.get(i).toString()

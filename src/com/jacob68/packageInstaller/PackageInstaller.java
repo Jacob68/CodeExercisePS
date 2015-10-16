@@ -1,9 +1,10 @@
 package com.jacob68.packageInstaller;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Scanner;
 
-import com.sun.istack.internal.NotNull;
+import com.jacob68.packageInstaller.tests.TestHelper;
 
 /**
  * This is the package installer that will take a list of packages and determine
@@ -14,218 +15,62 @@ import com.sun.istack.internal.NotNull;
  * application will terminate.
  * </p>
  * <p>
- * TODO Could maybe simplify the process by removing the Node class and
- * combining the convertPackagesToNodes list and the computeDependencies list?
+ * Pass the package list to this class as arguments.
  * </p>
  * 
  * @author Jacobus LaFazia
  */
 public class PackageInstaller {
 
-	private ArrayList<Node> mNodes = new ArrayList<Node>();
-	private String mErrorMsg;
-
 	public static void main(String[] args) {
-		// TODO Auto-generated method stub
 
 		System.out.println("Welcome to the package installer");
 		System.out.println("--------------------------------");
-		System.out.println("Simply enter a list of packages.");
+		System.out.println("Enter a comma separated list of packages to start");
 		System.out
 				.println("Each package must have the format, 'name: dependency'");
-		System.out.println("Hit the 'return' key to enter another package.");
-		System.out.println("Enter 'd' at anytime to finish entering packages.");
+		System.out.println("Example input: 'A: B, B: C, C: '");
+		System.out.println("Hit the 'return' key when finished.");
 
-		// TODO Get package list input
+		// Get package list input
 		Scanner input = new Scanner(System.in);
 		String entry = "";
-		ArrayList<String> packages = new ArrayList<String>();
+		String[] packages;
 
-		while (!entry.equals("d")) {
-			entry = input.next();
+		do {
+			System.out.println("Enter: ");
 
-			// Check for proper format
-			String regex = "(.*):(.*)";
-			String regex1 = ".(:).";
-			if (entry.matches(regex)) {
-				// TODO add entry to list
-				packages.add(entry);
+			entry = input.nextLine();
 
-			} else {
-				// Prompt bad format
-				System.out.println("Bad format, try again");
-			}
-		}
+			// Parse input into package array
+			packages = entry.split(", ");
 
-		// Check size of list
-		System.out.println("Packages list size = " + packages.size());
+			System.out.println("Packages: "
+					+ TestHelper.convertArrayToString(packages));
 
-		// TODO Create a node list from the package list
-		// Node should have a name and dependent node
-
-		// Once have the node list, generate the dependency list
-
-		// TODO Generate output, catch cycles
-	}
-
-	public String getErrorMessage() {
-		return mErrorMsg;
-	}
-
-	/**
-	 * @param nodeName
-	 *            The name of the node to get from the nodes list.
-	 * 
-	 * @return The Node with the given <i>nodeName</i> or <code>null</code> if
-	 *         not found in the nodes list.
-	 */
-	private Node getNode(String nodeName) {
-		for (Node node : mNodes) {
-			if (node.name.equals(nodeName)) {
-				return node;
-			}
-		}
-		return null;
-	}
-
-	/**
-	 * Must call method
-	 * {@linkplain PackageInstaller#convertPackagesToNodes(String[])} first to
-	 * ensure the nodes list has been generated.
-	 * 
-	 * @return The list of <i>Nodes</i> as converted from the package list.
-	 */
-	public ArrayList<Node> getNodes() {
-		return mNodes;
-	}
-
-	/**
-	 * Converts a String array containing packages into an ArrayList of
-	 * {@linkplain Node}s.
-	 * <p>
-	 * Package String format must be of the form "package: dependsOnPackage"
-	 * </p>
-	 * 
-	 * @param packages
-	 *            The String array of packages. Must not be <code>null</code>.
-	 */
-	public void convertPackagesToNodes(@NotNull String[] packages) {
-		// Clear current nodes list
-		mNodes.clear();
-
-		// Create a Node object for each package
-		for (int i = 0; i < packages.length; i++) {
-			String[] parts = packages[i].split(": ");
-
-			// Get/Create the parent node
-			Node parent = getNode(parts[0]);
-			if (parent == null) {
-				// Don't have this node, create it
-				parent = new Node(parts[0]);
+			System.out.println("Is this correct? (y/n)");
+			if (input.nextLine().startsWith("y")) {
+				// Ready to run the program
+				break;
 			}
 
-			// Set dependent node if any
-			if (parent.dependent == null && parts.length > 1) {
-				// Need to set the dependent
-				String name = parts[1];
-				// See if we have this node already
-				Node dependent = getNode(name);
-				if (dependent != null) {
-					// Have this node already,
-					// Set the dependent node to the parent node.
-					parent.setDependent(dependent);
-					// TODO check for cycle here?
+		} while (true);
 
-				} else {
-					// Create the dependent node
-					dependent = new Node(name);
-					// Add the dependent node to the parent
-					parent.setDependent(dependent);
-					// Add new dependent node to list
-					mNodes.add(dependent);
-				}
-			}
+		System.out.println("Running...");
 
-			// Add/update node to list
-			addOrUpdateNodeToList(parent);
+		Result result = DependencyResolver.resolveDependencies(packages);
+
+		// Print out the results
+		String msg = result.getErrorMessage();
+		if (msg != null) {
+			// Failed
+			System.out.println("Error: " + msg);
+
+		} else {
+			msg = TestHelper.convertNodeListToString(result.getResolvedNodes(),
+					false);
+			System.out.println("Package install order: " + msg);
 		}
-	}
-
-	private void addOrUpdateNodeToList(Node node) {
-		for (Node n : mNodes) {
-			if (n.name.equals(node.name)) {
-				// Update dependency
-				n.dependent = node.dependent;
-				return;
-			}
-		}
-		// Node not found, add it to list
-		mNodes.add(node);
-	}
-
-	/**
-	 * Takes the given <i>nodes</i> list and computes all dependencies and
-	 * re-orders the nodes such that all dependencies will be resolved.
-	 * 
-	 * @param nodes
-	 *            The list of nodes to compute the dependency list for.
-	 * 
-	 * @return The new list of nodes that are re-ordered with dependencies
-	 *         resolved or <code>null</code> if a circular dependency was
-	 *         detected.
-	 */
-	public ArrayList<Node> computeDependencies() {
-		// Keep track of nodes we've already seen to check for circular
-		// dependencies.
-		ArrayList<Node> seen = new ArrayList<Node>();
-		ArrayList<Node> resolved = new ArrayList<Node>();
-
-		try {
-			while (mNodes.size() > 0) {
-				resolveDependency(mNodes.get(0), seen, mNodes, resolved);
-			}
-
-		} catch (Exception e) {
-			// Save error message
-			mErrorMsg = e.getMessage();
-			return null;
-		}
-
-		return resolved;
-	}
-
-	/**
-	 * Drills down through the dependencies of the given node until the last
-	 * dependency has been found or a circular dependency has been detected.
-	 * 
-	 * @param node
-	 *            The node for which to resolve dependencies.
-	 * @param resolved
-	 *            The list of currently resolved nodes.
-	 */
-	private void resolveDependency(Node node, ArrayList<Node> seen,
-			ArrayList<Node> unresolved, ArrayList<Node> resolved)
-			throws Exception {
-		// Add node to the seen list
-		seen.add(node);
-
-		// Don't add dependent node if already resolved
-		if (node.dependent != null && !resolved.contains(node.dependent)) {
-			// Check for circular dependency
-			if (seen.contains(node.dependent)) {
-				throw new Exception(String.format(
-						"Found circular dependency: %s -> %s", node.name,
-						node.dependent.name));
-			}
-			resolveDependency(node.dependent, seen, unresolved, resolved);
-		}
-
-		if (!resolved.contains(node)) {
-			// add to resolved list
-			resolved.add(node);
-		}
-		// remove from unresolved list
-		unresolved.remove(node);
 	}
 
 }
